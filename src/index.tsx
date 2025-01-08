@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
-import { Grid, Html, OrbitControls } from "@react-three/drei";
+import { Grid, OrbitControls } from "@react-three/drei";
 import { AICharacter, AICharacterManager } from "ai-character/index";
 import { BedroomEnvironment } from "./environments/bedroom";
 import { SkyEnvironment } from "./environments/sky";
@@ -8,6 +8,15 @@ import { ChatControls } from "./ChatControls";
 
 export const AICharacterCanvas = () => {
   const [manager, setManager] = useState<AICharacterManager | null>(null);
+  const [showControls, setShowControls] = useState<boolean>(false);
+
+  React.useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const showControlsParam = searchParams.get("showControls") === "true";
+    setShowControls((prevShow) =>
+      prevShow !== showControlsParam ? showControlsParam : prevShow
+    );
+  }, []);
 
   return (
     <div
@@ -21,7 +30,7 @@ export const AICharacterCanvas = () => {
     >
       <Canvas
         camera={{ near: 0.01, far: 1000, position: [0, 1, 5] }} // Set the camera position
-        style={{ height: "800px", width: "100%" }} // Set the height to 800px and width to 100%
+        style={{ height: "100%", width: "100%" }} // Set the height to 800px and width to 100%
       >
         <SkyEnvironment />
         {/* <ambientLight intensity={0.5} /> */}
@@ -34,7 +43,9 @@ export const AICharacterCanvas = () => {
         <Character onLoad={(manager) => setManager(manager)} />
         <OrbitControls />
       </Canvas>
-      {manager && <ChatControls manager={manager} />}
+      {manager && (
+        <ChatControls showCharacterControls={showControls} manager={manager} />
+      )}
     </div>
   );
 };
@@ -50,7 +61,6 @@ const Character = ({
   // Initialize state with types
   const [vrmUrl, setVrmUrl] = useState<string | undefined>(undefined);
   const [voiceName, setVoiceName] = useState<string | undefined>(undefined);
-  const [showControls, setShowControls] = useState<boolean>(false);
 
   React.useEffect(() => {
     // Extract URL parameters
@@ -64,9 +74,6 @@ const Character = ({
     setVrmUrl((prevUrl) => (prevUrl !== vrmUrlParam ? vrmUrlParam : prevUrl));
     setVoiceName((prevName) =>
       prevName !== voiceNameParam ? voiceNameParam : prevName
-    );
-    setShowControls((prevShow) =>
-      prevShow !== showControlsParam ? showControlsParam : prevShow
     );
   }, []);
 
@@ -84,7 +91,6 @@ const Character = ({
           camera={camera}
           vrmUrl={vrmUrl !== "none" ? vrmUrl : undefined} // Pass vrmUrl as prop
           voiceName={voiceName !== "none" ? (voiceName as any) : undefined} // Pass voiceName as prop
-          showControls={showControls} // Pass showControls as prop
           onLoad={(manager) => {
             managerRef.current = manager;
             onLoad(manager);

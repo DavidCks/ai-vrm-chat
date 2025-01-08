@@ -21,7 +21,7 @@
     },
     "downlevelIteration": true,
     "skipLibCheck": true,
-    
+
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,

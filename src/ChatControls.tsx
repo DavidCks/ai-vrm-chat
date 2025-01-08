@@ -2,12 +2,17 @@ import { AICharacterManager } from "ai-character";
 import React, { useState, useEffect } from "react";
 import { FaPaperPlane, FaStop } from "react-icons/fa";
 import { ChatControlsController } from "./ChatControlsController"; // Import the controller
+import { AICharacterControls } from "ai-character/src/components/AICharacterControls.tsx";
 
 export type ChatControlsProps = {
   manager: AICharacterManager;
+  showCharacterControls?: boolean;
 };
 
-export const ChatControls: React.FC<ChatControlsProps> = ({ manager }) => {
+export const ChatControls: React.FC<ChatControlsProps> = ({
+  showCharacterControls,
+  manager,
+}) => {
   const [message, setMessage] = useState("");
   const [controller, setController] = useState<ChatControlsController | null>(
     null
@@ -70,34 +75,35 @@ export const ChatControls: React.FC<ChatControlsProps> = ({ manager }) => {
         boxSizing: "border-box",
       }}
     >
+      {showCharacterControls && <AICharacterControls manager={manager} />}
       {/* Row of icons visible only when speaking */}
-      {isSpeaking ||
-        (true && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: "10px",
-            }}
-          >
-            <button
-              onClick={handleStopSpeaking}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#0008",
-                borderRadius: "16px",
-                padding: "10px",
-                border: "none",
-                cursor: "pointer",
-                color: "#ffffff", // White stop icon
-              }}
-            >
-              <FaStop size={24} />
-            </button>
-          </div>
-        ))}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          marginBottom: "10px",
+        }}
+      >
+        {/* Stop icon visible only when speaking */}
+        <button
+          onClick={handleStopSpeaking}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#0008",
+            borderRadius: "16px",
+            padding: "10px",
+            border: "none",
+            cursor: "pointer",
+            color: "#ffffff",
+            opacity: isSpeaking ? 1 : 0,
+            transition: "opacity 0.2s ease-in-out",
+          }}
+        >
+          <FaStop size={24} />
+        </button>
+      </div>
 
       <div
         style={{
@@ -113,6 +119,11 @@ export const ChatControls: React.FC<ChatControlsProps> = ({ manager }) => {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyUp={(e) => {
+            if (e.key === "Enter") {
+              handleSendMessage();
+            }
+          }}
           placeholder="What do you want me to say?"
           style={{
             flex: 1,

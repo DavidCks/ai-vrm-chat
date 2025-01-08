@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "ai-character": "../ai-character",
+    "@react-three/drei": "^9.114.5",
+    "@react-three/fiber": "^8.17.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -37,7 +39,8 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0",
-    "@react-three/fiber": "^8.17.5",
+    "@react-three/drei": "^9.114.5",
+    "@react-three/fiber": "^8.17.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
